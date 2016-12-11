@@ -1,0 +1,3 @@
+[config]
+ldapuri: ldap://example.com
+binddn: cn=read-user,dc=example,dc=com
