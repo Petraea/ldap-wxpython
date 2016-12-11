@@ -41,7 +41,6 @@ class LDAP:
         modattrs={x:attrs[x] for x in attrs if x in curattrs}
         delattrs={x:attrs[x] for x in curattrs if x not in attrs}
         #do modify_s functions
-        return None
 
     def modifyAttrs(self,dn,attrs):
         '''Wrapper function for modifications. Will add or modify existing attrs, but not delete.'''
@@ -49,36 +48,31 @@ class LDAP:
         newattrs={x:attrs[x] for x in attrs if x not in curattrs}
         modattrs={x:attrs[x] for x in attrs if x in curattrs}
         #do modify_s functions
-        return None
 
     def deleteAttrs(self,dn,attrs):
         '''Wrapper function for modifications. Will only delete attributes.'''
         curattrs=self.getAttrs(dn).keys()
         delattrs={x:attrs[x] for x in curattrs if x not in attrs}
         #do modify_s functions
-        return None
 
     def deleteObject(self,dn):
         '''Wrapper function for modifications. Delete entire object.'''
         #do delete_s functions
-        return None
 
     def createObject(self,dn,attrs={}):
         '''Wrapper function for modifications. Adds entire object, with optional attributes set.'''
         #do add_s functions
-        return None
 
     def copyObject(self,olddn,newdn):
         '''Wrapper function for modifications. Copies entire object.'''
         self.createObject(newdn,self.getAttrs(olddn))
-        return None
 
     def moveObject(self,olddn,newdn):
-        '''Wrapper function for modifications. Moved an object.'''
+        '''Wrapper function for modifications. Moves an object.'''
         #do rename_s functions
-        return None
 
 
+#Test code
 l = LDAP()
 print(l.getChildren(l.basedn))
 a = l.getChildren(l.basedn)[1]

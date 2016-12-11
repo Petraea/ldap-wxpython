@@ -7,6 +7,7 @@ LDAP is a tree-based database. It consists of:
 ..1. Numeric
 ..2. String
 ..3. Binary
+..4. A reference to a DN
 ..* There is no known formal type binding for each object.
 The top OU is called a Domain Component (DC), which typically has multiple fields, e.g.
     dc=nurdspace,dc=nl

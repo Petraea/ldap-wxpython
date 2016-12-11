@@ -1,26 +1,11 @@
 import wx
 from connectdialog import ConnectDialog
+from treebrowser import TreeBrowser
+from infopane import InfoPane
 
 ID_CONNECT=10
 ID_DISCONNECT=20
 ID_SPLITTER=100
-
-class TreeBrowser(wx.TreeCtrl):
-    def __init__(self, parent, id):
-        wx.TreeCtrl.__init__(self, parent, id, style=wx.TR_HAS_BUTTONS)
-
-        r = self.AddRoot('test')
-        self.AppendItem(r,'test2')
-
-class InfoPane(wx.ListCtrl):
-    def __init__(self, parent, id):
-        wx.ListCtrl.__init__(self, parent, id, style=wx.LC_REPORT)
-
-        self.InsertColumn(0,'Field')
-        self.InsertColumn(1,'Value')
-
-        self.SetColumnWidth(0, 220)
-        self.SetColumnWidth(1, 70)
 
 class LdapBrowser(wx.Frame):
     def __init__(self, parent, id):
