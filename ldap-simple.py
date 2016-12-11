@@ -36,6 +36,11 @@ class LDAP:
         self.config=config
         self.ldap = ldap.initialize(config.ldapuri)
         self.ldap.simple_bind_s(config.binddn,config.password)
+        # Trick from https://www.ibm.com/developerworks/aix/library/au-ldap_crud/
+        #to find basedn via the root DSE
+        rootdse = self.ldap.search_s('',ldap.SCOPE_BASE,'(objectclass=*)',['namingContexts'])
+        self.basedn = rootdse[0][1]['namingContexts'][0]
 
+#Attempt to find base dc with nothing
 l = LDAP()
-print(l.ldap.search_s('',ldap.SCOPE_BASE,'dc=*'))
+print (l.ldap.search_s(l.basedn,ldap.SCOPE_SUBTREE,'(objectClass=*)'))
