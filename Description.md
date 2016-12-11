@@ -12,6 +12,8 @@ The top OU is called a Domain Component (DC), which typically has multiple field
     dc=nurdspace,dc=nl
 All objects can be uniquely identified by their Distinguished Name (DN).
 
+At the present time there are no 'good' Window-based LDAP browsers available for Linux. The aim of this project is to provide a simple, robust browser and editor.
+
 # Window description
 
 The main display should be split into two sides - the left side as a tree browser, whilst the right side is an information panel about the selected object.
