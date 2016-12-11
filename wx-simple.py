@@ -1,4 +1,5 @@
 import wx
+from collections import OrderedDict
 
 ID_CONNECT=10
 ID_DISCONNECT=20
@@ -23,7 +24,8 @@ class InfoPane(wx.ListCtrl):
 
 class ConnectWindow(wx.Dialog):
     def __init__(self, parent, id):
-        wx.Dialog.__init__(self, parent, -1, 'Connect to a Server')
+        wx.Dialog.__init__(self, parent, -1, 'Connect')
+        self.parent = parent
 
         pnl = wx.Panel(self)
         vbox = wx.BoxSizer(wx.VERTICAL)
@@ -31,47 +33,63 @@ class ConnectWindow(wx.Dialog):
         sb = wx.StaticBox(pnl, label='Connection Settings')
         sbs = wx.StaticBoxSizer(sb, orient=wx.VERTICAL)
 
-        ldapuri = wx.BoxSizer(wx.HORIZONTAL)
-        ldapuri.Add(wx.StaticText(pnl, label='LDAP URI'))
-        ldapuri.Add(wx.TextCtrl(pnl), flag=wx.LEFT, border=5)
-        sbs.Add(ldapuri)
+        ldapurib = wx.BoxSizer(wx.HORIZONTAL)
+        ldapurib.Add(wx.StaticText(pnl, label='LDAP URI'))
+        self.ldapuri = wx.TextCtrl(pnl)
+        ldapurib.Add(self.ldapuri, flag=wx.LEFT, border=5)
+        sbs.Add(ldapurib)
 
-        binddn = wx.BoxSizer(wx.HORIZONTAL)
-        binddn.Add(wx.StaticText(pnl, label='Bind DN'))
-        binddn.Add(wx.TextCtrl(pnl), flag=wx.LEFT, border=5)
-        sbs.Add(binddn)
+        binddnb = wx.BoxSizer(wx.HORIZONTAL)
+        binddnb.Add(wx.StaticText(pnl, label='Bind DN'))
+        self.binddn = wx.TextCtrl(pnl)
+        binddnb.Add(self.binddn, flag=wx.LEFT, border=5)
+        sbs.Add(binddnb)
 
-        passwd = wx.BoxSizer(wx.HORIZONTAL)
-        passwd.Add(wx.StaticText(pnl, label='Password'))
-        passwd.Add(wx.TextCtrl(pnl,style=wx.TE_PASSWORD), flag=wx.LEFT, border=5)
-        sbs.Add(passwd)
+        passwdb = wx.BoxSizer(wx.HORIZONTAL)
+        passwdb.Add(wx.StaticText(pnl, label='Password'))
+        self.passwd = wx.TextCtrl(pnl,style=wx.TE_PASSWORD)
+        passwdb.Add(self.passwd, flag=wx.LEFT, border=5)
+        sbs.Add(passwdb)
 
-        sasl = wx.CheckBox(pnl,label='Use SASL')
-        sasl.SetValue(False)
-        sasl.Disable()
-        sbs.Add(sasl)
+        self.sasl = wx.CheckBox(pnl,label='Use SASL')
+        self.sasl.SetValue(False)
+        self.sasl.Disable()
+        sbs.Add(self.sasl)
 
-        sbs.Add(wx.RadioBox(pnl,label='Protocol',choices=['Automatic','Force 2','Force 3'],
-                majorDimension = 1,style = wx.RA_SPECIFY_COLS))
+        self.protochoices=OrderedDict([('Automatic',None),('Force 2',2),('Force 3',3)])
+        self.proto = wx.RadioBox(pnl,label='Protocol',
+            choices=self.protochoices.keys(),
+            majorDimension = 1,style = wx.RA_SPECIFY_COLS)
+        sbs.Add(self.proto)
         pnl.SetSizer(sbs)
 
-        hbox2 = wx.BoxSizer(wx.HORIZONTAL)
-        okButton = wx.Button(self, label='Ok')
+        buttonbox = wx.BoxSizer(wx.HORIZONTAL)
+        connectButton = wx.Button(self, label='Connect')
         closeButton = wx.Button(self, label='Close')
-        hbox2.Add(okButton)
-        hbox2.Add(closeButton, flag=wx.LEFT, border=5)
+        buttonbox.Add(connectButton)
+        buttonbox.Add(closeButton, flag=wx.LEFT, border=5)
 
         vbox.Add(pnl, proportion=1,
             flag=wx.ALL|wx.EXPAND, border=5)
-        vbox.Add(hbox2,
+        vbox.Add(buttonbox,
             flag=wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, border=10)
 
         self.SetSizer(vbox)
         self.Fit()
-        okButton.Bind(wx.EVT_BUTTON, self.OnClose)
+        connectButton.Bind(wx.EVT_BUTTON, self.OnConnect)
         closeButton.Bind(wx.EVT_BUTTON, self.OnClose)
 
         self.ShowModal()
+
+    def OnConnect(self, e):
+        print(self.passwd.GetValue())
+        print(self.ldapuri.GetValue())
+        print(self.binddn.GetValue())
+        print(self.sasl.GetValue())
+        print(self.proto.GetSelection())
+        print(self.protochoices.values())
+        print(self.protochoices.values()[self.proto.GetSelection()])
+        self.Destroy()
 
     def OnClose(self, e):
         self.Destroy()
