@@ -1,28 +1,35 @@
 import logging, sys
+import traceback
 import ldap
 from confighandler import Config
-
-#Temporary testing code
-root = logging.getLogger()
-root.setLevel(logging.DEBUG)
-
-ch = logging.StreamHandler(sys.stdout)
-ch.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-ch.setFormatter(formatter)
-root.addHandler(ch)
 
 class LDAP:
     def __init__(self,config=None):
         if config is None:
             config=Config()
         self.config=config
-        self.ldap = ldap.initialize(config.ldapuri)
-        self.ldap.simple_bind_s(config.binddn,config.password)
-        # Trick from https://www.ibm.com/developerworks/aix/library/au-ldap_crud/
-        #to find basedn via the root DSE
-        rootdse = self.ldap.search_s('',ldap.SCOPE_BASE,'(objectclass=*)',['namingContexts'])
-        self.basedn = rootdse[0][1]['namingContexts'][0]
+        try:
+            self.ldap = ldap.initialize(self.config.ldapuri)
+            logging.debug('LDAP initialised from URI %s' % self.config.ldapuri)
+            try:
+                self.ldap.simple_bind_s(self.config.binddn,self.config.password)
+                logging.debug('LDAP bound to bindDN %s' % self.config.binddn)
+                try:
+                    # Trick from https://www.ibm.com/developerworks/aix/library/au-ldap_crud/
+                    #to find basedn via the root DSE
+                    rootdse = self.ldap.search_s('',ldap.SCOPE_BASE,'(objectclass=*)',['namingContexts'])
+                    self.basedn = rootdse[0][1]['namingContexts'][0]
+                    logging.debug('LDAP baseDN found as %s' % self.basedn)
+                except:
+                    logging.error('LDAP baseDN not found.')
+                    logging.debug(traceback.format_exc())
+            except:
+                logging.error('LDAP not bound to bindDN %s' % self.config.binddn)
+                logging.debug(traceback.format_exc())
+        except:
+            logging.error('LDAP not initialised. URI: %s' % self.config.ldapuri)
+            logging.debug(traceback.format_exc())
+
 
     def getChildren(self,dn):
         '''Wrapper function for treebrowsing. Just get me the DNs that are under this one.'''
@@ -73,10 +80,11 @@ class LDAP:
 
 
 #Test code
-l = LDAP()
-print(l.getChildren(l.basedn))
-a = l.getChildren(l.basedn)[1]
-print(l.getChildren(a))
-b = l.getChildren(a)[2]
-print(l.getAttrs(b))
+if __name__ == '__main__':
+    l = LDAP()
+    print(l.getChildren(l.basedn))
+    a = l.getChildren(l.basedn)[1]
+    print(l.getChildren(a))
+    b = l.getChildren(a)[2]
+    print(l.getAttrs(b))
 
