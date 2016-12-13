@@ -11,9 +11,12 @@ class Config:
         self.force3=False
         self.path=path
         config = ConfigParser.ConfigParser()
-        config.read(path)
-        for f in self.__dict__.keys():
-            try:
-                setattr(self,f,config.get('config',f))
-            except:
-                logging.debug('No field %s defined in config.' % f)
+        try:
+            config.read(path)
+            for f in self.__dict__.keys():
+                try:
+                    setattr(self,f,config.get('config',f))
+                except:
+                    logging.debug('No field %s defined in config.' % f)
+        except:
+            logging.debug('No config %s defined.' % path)
