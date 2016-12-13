@@ -1,4 +1,4 @@
-import logging
+import logging, traceback
 import ConfigParser
 
 class Config:
@@ -27,9 +27,17 @@ class Config:
         config = ConfigParser.ConfigParser()
         config.add_section('config')
         for f in self.__dict__.keys():
-            config.set('config',f,getattr(self,f))
+            if f.lower() != 'password':
+                config.set('config',f,getattr(self,f))
         try:
-            config.write(self.path)
+            with open(self.path,'w') as f:
+                config.write(f)
         except:
-            logging.error('Cannot save config to %s' % path)
+            logging.error('Cannot save config to %s' % self.path)
+            logging.debug(traceback.format_exc())
 
+    def __str__(self):
+        ret='CONFIG: '
+        fields = ['%s:%s' % (f, getattr(self,f)) for f in self.__dict__.keys()]
+        ret = ret + ' '.join(fields)
+        return ret
