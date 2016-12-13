@@ -8,6 +8,10 @@ class LDAP:
         if config is None:
             config=Config()
         self.config=config
+        self.connected=False
+        self.connect()
+
+    def connect(self):
         try:
             self.ldap = ldap.initialize(self.config.ldapuri)
             logging.debug('LDAP initialised from URI %s' % self.config.ldapuri)
@@ -20,6 +24,7 @@ class LDAP:
                     rootdse = self.ldap.search_s('',ldap.SCOPE_BASE,'(objectclass=*)',['namingContexts'])
                     self.basedn = rootdse[0][1]['namingContexts'][0]
                     logging.debug('LDAP baseDN found as %s' % self.basedn)
+                    self.connected = True
                 except:
                     logging.error('LDAP baseDN not found.')
                     logging.debug(traceback.format_exc())
@@ -29,7 +34,6 @@ class LDAP:
         except:
             logging.error('LDAP not initialised. URI: %s' % self.config.ldapuri)
             logging.debug(traceback.format_exc())
-
 
     def getChildren(self,dn):
         '''Wrapper function for treebrowsing. Just get me the DNs that are under this one.'''
@@ -81,6 +85,16 @@ class LDAP:
 
 #Test code
 if __name__ == '__main__':
+
+    root = logging.getLogger()
+    root.setLevel(logging.DEBUG)
+
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    ch.setFormatter(formatter)
+    root.addHandler(ch)
+
     l = LDAP()
     print(l.getChildren(l.basedn))
     a = l.getChildren(l.basedn)[1]

@@ -32,6 +32,7 @@ class Config:
         try:
             with open(self.path,'w') as f:
                 config.write(f)
+                logging.debug('Config saved to %s' % self.path)
         except:
             logging.error('Cannot save config to %s' % self.path)
             logging.debug(traceback.format_exc())
