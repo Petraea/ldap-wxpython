@@ -5,11 +5,12 @@ from collections import OrderedDict
 from confighandler import Config
 
 class ConnectDialog(wx.Dialog):
-    def __init__(self, parent, id):
+    def __init__(self, parent, config=None):
         wx.Dialog.__init__(self, parent, -1, 'Connect')
         self.parent = parent
-        self.config=Config()
-
+        if config is None:
+            config=Config()
+        self.config=config
         pnl = wx.Panel(self)
         vbox = wx.BoxSizer(wx.VERTICAL)
 
@@ -110,11 +111,11 @@ class ConnectDialog(wx.Dialog):
             self.config.save()
         saveAsFileDialog.Destroy()
 
-    def UpdateConfig(self):
+    def UpdateConfig(self, e=''):
         self.config.password = self.passwd.GetValue()
         self.config.ldapuri = self.ldapuri.GetValue()
         self.config.binddn = self.binddn.GetValue()
-        self.config.sasl = self.sasl.GetValue()
+        self.config.sasl = str(self.sasl.GetValue()).lower()
         self.config.proto = self.protochoices.values()[self.proto.GetSelection()]
 
     def GetValue(self):
