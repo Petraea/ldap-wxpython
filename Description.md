@@ -1,14 +1,15 @@
 # Initial Preamble
 
 LDAP is a tree-based database. It consists of:
-..* Organisational units (OU) that form the nodes of the tree
-..* Objects for the leaves, that are distinguised by their Common Name (CN)
-..* Each CN has multiple properties associated with them that may be:
-..1. Numeric
-..2. String
-..3. Binary
-..4. A reference to a DN
-..* There is no known formal type binding for each object.
+ * Organisational units (OU) that form the nodes of the tree
+ * Objects for the leaves, that are distinguised by their Common Name (CN)
+ * Each CN has multiple properties associated with them that form a list. Each entry is representable as a string, but may be underlying a construction of one of:
+ 1. Numeric
+ 2. String
+ 3. Boolean ('FALSE' or 'TRUE')
+ 4. Binary data
+ 5. A reference to a DN
+ * There is no known formal type binding for each object.
 The top OU is called a Domain Component (DC), which typically has multiple fields, e.g.
     dc=nurdspace,dc=nl
 All objects can be uniquely identified by their Distinguished Name (DN).
