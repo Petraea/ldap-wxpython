@@ -22,11 +22,11 @@ class LDAP:
                     # Trick from https://www.ibm.com/developerworks/aix/library/au-ldap_crud/
                     #to find basedn via the root DSE
                     rootdse = self.ldap.search_s('',ldap.SCOPE_BASE,'(objectclass=*)',['namingContexts'])
-                    self.basedn = rootdse[0][1]['namingContexts'][0]
-                    logging.debug('LDAP baseDN found as %s' % self.basedn)
+                    logging.debug('LDAP baseDNs are %s' % rootdse[0][1]['namingContexts'])
+                    self.basedns = rootdse[0][1]['namingContexts']
                     self.connected = True
                 except:
-                    logging.error('LDAP baseDN not found.')
+                    logging.error('LDAP baseDNs not found.')
                     logging.debug(traceback.format_exc())
             except:
                 logging.error('LDAP not bound to bindDN %s' % self.config.binddn)
@@ -38,6 +38,8 @@ class LDAP:
     def getChildren(self,dn):
         '''Wrapper function for treebrowsing. Just get me the DNs that are under this one.'''
         res = [x[0] for x in self.ldap.search_s(dn,ldap.SCOPE_ONELEVEL,attrlist=['dn'])]
+        res = [x for x in res if x is not None]
+        res = [x[:-len(dn)-1] for x in res]
         return res
 
     def getAttrs(self,dn):
@@ -96,8 +98,8 @@ if __name__ == '__main__':
     root.addHandler(ch)
 
     l = LDAP()
-    print(l.getChildren(l.basedn))
-    a = l.getChildren(l.basedn)[1]
+    print(l.getChildren(l.basedns[0]))
+    a = l.getChildren(l.basedns[0])[1]
     print(l.getChildren(a))
     b = l.getChildren(a)[2]
     print(l.getAttrs(b))
