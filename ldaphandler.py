@@ -21,7 +21,7 @@ class LDAP:
                 try:
                     # Trick from https://www.ibm.com/developerworks/aix/library/au-ldap_crud/
                     #to find basedn via the root DSE
-                    rootdse = self.ldap.search_s('',ldap.SCOPE_BASE,'(objectclass=*)',['namingContexts'])
+                    rootdse = self.ldap.search_s('',ldap.SCOPE_BASE,'(objectclass=*)')
                     logging.debug('LDAP baseDNs are %s' % rootdse[0][1]['namingContexts'])
                     self.basedns = rootdse[0][1]['namingContexts']
                     self.connected = True
@@ -99,8 +99,9 @@ if __name__ == '__main__':
 
     l = LDAP()
     print(l.getChildren(l.basedns[0]))
-    a = l.getChildren(l.basedns[0])[1]
+    a = l.getChildren(l.basedns[0])[0]+','+l.basedns[0]
+    print(a)
     print(l.getChildren(a))
-    b = l.getChildren(a)[2]
+    b = l.getChildren(a)[2]+','+a
     print(l.getAttrs(b))
 
