@@ -52,6 +52,7 @@ class TreeBrowser(wx.TreeCtrl):
                 logging.debug('Adding child: %s' % child)
                 newid = self.AppendItem(path[0],child)
                 if not child.lower().startswith('cn='):
+                    #Or if objectClass: container - THESE HAVE CONTENTS
                     self.AppendItem(newid,'')
         for child in remchildren:
             if child is not None:
