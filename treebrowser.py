@@ -18,6 +18,7 @@ class TreeBrowser(wx.TreeCtrl):
             for r in self.roots:
                 self.AppendItem(r,'')
             self.Bind(wx.EVT_TREE_ITEM_EXPANDING,self.OnExpand)
+            self.Bind(wx.EVT_TREE_SEL_CHANGED,self.OnSelect)
 
     def getPath(self, id):
         if id in self.roots:
@@ -57,7 +58,8 @@ class TreeBrowser(wx.TreeCtrl):
                 logging.debug('Removing child: %s' % child)
                 self.Delete(child)
 
-        #Get the path to this node
-        #Look up int the LDAP these children
-        #Add them as my children but don't replace any already existing
-        #Unless they no longer exist
+
+    def OnSelect(self, event):
+        id = event.GetItem()
+        path = [self.GetItemText(x) for x in self.getPath(id)]
+        self.infopane.Update(','.join(path))

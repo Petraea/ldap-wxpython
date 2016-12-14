@@ -38,6 +38,7 @@ class LDAP:
     def getChildren(self,dn):
         '''Wrapper function for treebrowsing. Just get me the DNs that are under this one.'''
         res = [x[0] for x in self.ldap.search_s(dn,ldap.SCOPE_ONELEVEL,attrlist=['dn'])]
+        #This needs paged results.
         res = [x for x in res if x is not None]
         res = [x[:-len(dn)-1] for x in res]
         return res
