@@ -22,15 +22,20 @@ class LDAP:
                     # Trick from https://www.ibm.com/developerworks/aix/library/au-ldap_crud/
                     #to find basedn via the root DSE
                     #This is valid in LDAP, not AD
-#                    rootdse = self.ldap.search_s("",ldap.SCOPE_BASE,attrlist=['+'])
-                    #This is valid in AD, not LDAP
-                    rootdse = self.ldap.search_s("",ldap.SCOPE_BASE,'(objectclass=*)')
-                    logging.debug('LDAP baseDNs are %s' % rootdse[0][1]['namingContexts'])
+                    rootdse = self.ldap.search_s("",ldap.SCOPE_BASE,attrlist=['+'])
                     self.basedns = rootdse[0][1]['namingContexts']
+                    logging.debug('LDAP baseDNs are %s' % self.basedns)
                     self.connected = True
                 except:
-                    logging.error('LDAP baseDNs not found.')
-                    logging.debug(traceback.format_exc())
+                    try:
+                        #This is valid in AD, not LDAP
+                        rootdse = self.ldap.search_s("",ldap.SCOPE_BASE,'(objectclass=*)')
+                        self.basedns = rootdse[0][1]['namingContexts']
+                        logging.debug('LDAP baseDNs are %s' % self.basedns)
+                        self.connected = True
+                    except:
+                        logging.error('LDAP baseDNs not found.')
+                        logging.debug(traceback.format_exc())
             except:
                 logging.error('LDAP not bound to bindDN %s' % self.config.binddn)
                 logging.debug(traceback.format_exc())
