@@ -51,9 +51,14 @@ class TreeBrowser(wx.TreeCtrl):
             if child is not None:
                 logging.debug('Adding child: %s' % child)
                 newid = self.AppendItem(path[0],child)
-                if not child.lower().startswith('cn='):
+                attrs = self.ldap.getAttrs(child+','+dn)
+                if 'objectClass' in attrs:
+                    logging.debug(attrs['objectClass'])
+                    validcontainers=['organizationalUnit','container','lostAndFound']
+                    if any(x in attrs['objectClass'] for x in validcontainers):
+#                if not child.lower().startswith('cn='):
                     #Or if objectClass: container - THESE HAVE CONTENTS
-                    self.AppendItem(newid,'')
+                        self.AppendItem(newid,'')
         for child in remchildren:
             if child is not None:
                 logging.debug('Removing child: %s' % child)

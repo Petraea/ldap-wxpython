@@ -14,6 +14,7 @@ class LDAP:
     def connect(self):
         try:
             self.ldap = ldap.initialize(self.config.ldapuri)
+            self.ldap.set_option(ldap.OPT_REFERRALS, 0)
             logging.debug('LDAP initialised from URI %s' % self.config.ldapuri)
             try:
                 self.ldap.simple_bind_s(self.config.binddn,self.config.password)
